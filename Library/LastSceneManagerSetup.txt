@@ -1,0 +1,4 @@
+sceneSetups:
+- path: Assets/Dragger.unity
+  isLoaded: 1
+  isActive: 1
