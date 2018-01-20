@@ -7,59 +7,37 @@ public class Draggable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
 	public delegate void Dragging();
 	public static event Dragging DraggingStarted;
 	public static event Dragging DraggingFinished;
+	private Parent _parent;
 
-	private Transform startingParent = null;
-	private Transform parentToReturn = null;
-	private Vector2 delta;
+	private Vector2 _delta;
 
 	public void OnBeginDrag(PointerEventData eventData)
 	{
-		startingParent = this.transform.parent;
-		this.transform.SetParent (this.transform.parent.parent);
-		delta = new Vector2(this.transform.position.x - eventData.position.x, this.transform.position.y - eventData.position.y);
+		_parent = new Parent(transform.parent);
+		transform.SetParent (transform.parent.parent);
+		_delta = new Vector2(transform.position.x - eventData.position.x, transform.position.y - eventData.position.y);
 		GetComponent<CanvasGroup> ().blocksRaycasts = false;
 
-		DraggingStarted();
-		Debug.Log ("Draggable " + this.name + " is listening to events");
-		DropZone.PointerEntered += SetParentToReturn;
-		DropZone.PointerExited += ResetParent;
+		if (DraggingStarted != null) DraggingStarted();
+		Debug.Log ("Draggable " + name + " is listening to events");
+		DropZone.PointerEntered += _parent.SetPotential;
+		DropZone.PointerExited += _parent.Reset;
 	}
 
 	public void OnDrag(PointerEventData eventData)
 	{
-		this.transform.position = eventData.position + delta;
+		transform.position = eventData.position + _delta;
 	}
 
 	public void OnEndDrag(PointerEventData eventData)
 	{
-		if (parentToReturn == null) {
-			Debug.Log ("ParentToReturn was null :( ");
-			parentToReturn = startingParent;
-		}
-		Debug.Log ("Returning to " + parentToReturn);
-		this.transform.SetParent (parentToReturn);
+		transform.SetParent (_parent.Get());
 
 		GetComponent<CanvasGroup> ().blocksRaycasts = true;
 
-		DraggingFinished();
+		if (DraggingFinished != null) DraggingFinished();
 		Debug.Log ("Fuck this");
-		DropZone.PointerEntered -= SetParentToReturn;
-		DropZone.PointerExited -= ResetParent;
-	}
-
-	void SetParentToReturn(DropZone parent)
-	{
-		if (parent == null) {
-			Debug.Log ("parent has been reset");
-			parentToReturn = null;
-		} else {
-			Debug.Log ("parentToReturn set to: " + parent.name);
-			parentToReturn = parent.transform;
-		}
-	}
-
-	void ResetParent(DropZone parent)
-	{
-		SetParentToReturn (null);
+		DropZone.PointerEntered -= _parent.SetPotential;
+		DropZone.PointerExited -= _parent.Reset;
 	}
 }

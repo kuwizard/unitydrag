@@ -4,11 +4,12 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class DropZone : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
-	public delegate void Entered(DropZone dropZone);
+	public delegate void Entered(Transform dropZone);
 	public static event Entered PointerEntered;
-	public static event Entered PointerExited;
+	public delegate void Exited();
+	public static event Exited PointerExited;
 
-	private bool DraggingInProgress = false;
+	private bool _draggingInProgress;
 
 	public void OnEnable(){
 		Draggable.DraggingStarted += EnableListening;
@@ -21,22 +22,22 @@ public class DropZone : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 	}
 
 	public void OnPointerEnter(PointerEventData eventData) {
-		if(DraggingInProgress)
-			PointerEntered (this);
+		if(_draggingInProgress && PointerEntered != null)
+			PointerEntered (transform);
 	}
 
 	public void OnPointerExit(PointerEventData eventData) {
-		if(DraggingInProgress)
-			PointerExited (this);
+		if(_draggingInProgress && PointerExited != null)
+			PointerExited ();
 	}
 
 	private void EnableListening() {
 		Debug.Log ("Dropzone "+ this.name + " started to listen");
-		DraggingInProgress = true;
+		_draggingInProgress = true;
 	}
 
 	private void DisableListening() {
 		Debug.Log ("Dropzone "+ this.name + " stopped to listen");
-		DraggingInProgress = false;
+		_draggingInProgress = false;
 	}
 }
