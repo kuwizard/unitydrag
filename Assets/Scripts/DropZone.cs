@@ -11,9 +11,9 @@ public class DropZone : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 	public delegate void Exited();
 	public static event Exited PointerExited;
 
-	public Transform Card;
-	private Transform _placeholder;
+	public Transform card;
 	private bool _dragginInProgress;
+    private PlaceHolder _placeHolder;
 
 	public void OnEnable(){
 		Draggable.DraggingStarted += EnableListening;
@@ -28,25 +28,18 @@ public class DropZone : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 	public void OnPointerEnter(PointerEventData eventData) {
 		if(PointerEntered != null)
 			PointerEntered (transform);
-
+               
 		if (_dragginInProgress)
 		{
-			_placeholder = Instantiate(Card);
-			for (int i = 0; i < _placeholder.childCount; i++)
-			{
-				Destroy(_placeholder.GetChild(i).gameObject);
-			}
-
-			Destroy(_placeholder.GetComponent<Image>());
-			_placeholder.SetParent(transform);
-		}
+            var placeHolder = new PlaceHolder(card, transform);
+        }
 	}
 
 	public void OnPointerExit(PointerEventData eventData) {
 		if(PointerExited != null)
 			PointerExited ();
-		if(_placeholder != null)
-			Destroy(_placeholder.gameObject);
+		if(_placeHolder != null)
+			Destroy(_placeHolder);
 	}
 
 	private void EnableListening(String name)
@@ -55,8 +48,8 @@ public class DropZone : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 	}
 
 	private void DisableListening(String name) {
-		if(_placeholder != null)
-			Destroy(_placeholder.gameObject);
+		if(_placeHolder != null)
+			Destroy(_placeHolder);
 		_dragginInProgress = false;
 	}
 }
