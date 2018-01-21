@@ -15,11 +15,10 @@ public class Draggable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
 		if (DraggingStarted != null) DraggingStarted(name);
 		
 		_parent = new Parent(transform.parent);
-		transform.SetParent (transform.parent.parent);
+		transform.SetParent (_parent.Get().parent);
 		_delta = new Vector2(transform.position.x - eventData.position.x, transform.position.y - eventData.position.y);
 		GetComponent<CanvasGroup> ().blocksRaycasts = false;
 
-		Debug.Log ("Draggable " + name + " is listening to events");
 		DropZone.PointerEntered += _parent.SetPotential;
 		DropZone.PointerExited += _parent.Reset;
 	}
@@ -36,7 +35,6 @@ public class Draggable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
 		GetComponent<CanvasGroup> ().blocksRaycasts = true;
 
 		if (DraggingFinished != null) DraggingFinished(name);
-		Debug.Log ("Fuck this");
 		DropZone.PointerEntered -= _parent.SetPotential;
 		DropZone.PointerExited -= _parent.Reset;
 	}
