@@ -7,6 +7,7 @@ public class Draggable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
 	public static event Dragging DraggingStarted;
 	public static event Dragging DraggingFinished;
 	private Parent _parent;
+	private float[] _xCoords;
 
 	private Vector2 _delta;
 
@@ -21,11 +22,13 @@ public class Draggable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
 
 		DropZone.PointerEntered += _parent.SetPotential;
 		DropZone.PointerExited += _parent.Reset;
+		DropZone.XCoords += _parent.SetXCoords;
 	}
 
 	public void OnDrag(PointerEventData eventData)
 	{
 		transform.position = eventData.position + _delta;
+		if(transform.position.x < )
 	}
 
 	public void OnEndDrag(PointerEventData eventData)

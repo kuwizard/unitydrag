@@ -4,6 +4,7 @@ public class Parent
 {
     private readonly Transform _starting;
     private Transform _potential;
+    private float[] _xCoords;
 
     public Parent(Transform parent)
     {
@@ -23,5 +24,10 @@ public class Parent
     public void Reset()
     {
         _potential = null;
+    }
+    
+    public void SetXCoords(float[] xCoords)
+    {
+        _xCoords = xCoords;
     }
 }
