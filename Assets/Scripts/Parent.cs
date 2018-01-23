@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Parent
 {
     private readonly Transform _starting;
     private Transform _potential;
-    private float[] _xCoords;
+    private Coords _xCoords;
 
     public Parent(Transform parent)
     {
@@ -26,7 +27,7 @@ public class Parent
         _potential = null;
     }
     
-    public void SetXCoords(float[] xCoords)
+    public void SetXCoords(List<float> xCoords)
     {
         _xCoords = xCoords;
     }
