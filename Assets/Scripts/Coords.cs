@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class Coords
 {
     private List<float> _xCoords;
+    
     private float _wasBetweenLeft;
     private float _wasBetweenRight;
     private int _lastPosition;
