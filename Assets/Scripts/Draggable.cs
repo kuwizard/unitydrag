@@ -7,7 +7,6 @@ public class Draggable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
 	public static event Dragging DraggingStarted;
 	public static event Dragging DraggingFinished;
 	private Parent _parent;
-	private Coords _coords;
 
 	private Vector2 _delta;
 
@@ -28,7 +27,7 @@ public class Draggable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
 	public void OnDrag(PointerEventData eventData)
 	{
 		transform.position = eventData.position + _delta;
-		
+		_parent.SetCurrentX(transform.position.x);
 	}
 
 	public void OnEndDrag(PointerEventData eventData)

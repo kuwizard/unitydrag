@@ -4,7 +4,6 @@ using System.Collections.Generic;
 public class Coords
 {
     private List<float> _xCoords;
-    
     private float _wasBetweenLeft;
     private float _wasBetweenRight;
     private int _lastPosition;
@@ -24,7 +23,11 @@ public class Coords
     public void SetCurrentX(float x)
     {
         if (_lastPosition == -1)
+        {
             CalculateBetweens(x);
+            if (PositionChanged != null) PositionChanged(_lastPosition);
+        }
+
         if (x < _wasBetweenLeft || _wasBetweenRight < x)
         {
             CalculateBetweens(x);
@@ -39,8 +42,8 @@ public class Coords
         {
             i++;
         }
-        _wasBetweenLeft = _xCoords[i];
-        _wasBetweenRight = _xCoords[i + 1];
-        _lastPosition = i + 1;
+        _wasBetweenLeft = _xCoords[i - 1];
+        _wasBetweenRight = _xCoords[i];
+        _lastPosition = i - 1;
     }
 }

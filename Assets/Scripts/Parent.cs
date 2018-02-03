@@ -29,6 +29,11 @@ public class Parent
     
     public void SetXCoords(List<float> xCoords)
     {
-        _xCoords = xCoords;
+        _xCoords = new Coords(xCoords);
+    }
+    
+    public void SetCurrentX(float x)
+    {
+        _xCoords.SetCurrentX(x);
     }
 }

@@ -10,13 +10,12 @@ public class DropZone : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 	public static event Entered PointerEntered;
 	public delegate void Exited();
 	public static event Exited PointerExited;
-	public delegate void XCoordsType(float[] xCoords);
+	public delegate void XCoordsType(List<float> xCoords);
 	public static event XCoordsType XCoords;
 
 	public Transform Card;
 	private Transform _placeholder;
 	private bool _dragginInProgress;
-	private float[] _xcoords;
 
 	public void OnEnable(){
 		Draggable.DraggingStarted += EnableListening;
@@ -31,25 +30,16 @@ public class DropZone : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 	public void OnPointerEnter(PointerEventData eventData) {
 		if (_dragginInProgress)
 		{
-			_xcoords = new float[transform.childCount];
+			List<float> xcoords = new List<float>();
 			for (int i = 0; i < transform.childCount; i++)
 			{
-				_xcoords[i] = transform.GetChild(i).transform.position.x;
+				xcoords.Add(transform.GetChild(i).transform.position.x);
 			}
+			if (XCoords != null) XCoords(xcoords);
+			Coords.PositionChanged += Redraw;
 			
-			_placeholder = Instantiate(Card);
-			for (int i = 0; i < _placeholder.childCount; i++)
-			{
-				Destroy(_placeholder.GetChild(i).gameObject);
-			}
-
-			Destroy(_placeholder.GetComponent<Image>());
-			_placeholder.SetParent(transform);
-
 			if (PointerEntered != null) PointerEntered(transform);
-			if (XCoords != null) XCoords(_xcoords);
 		}
-
 	}
 
 	public void OnPointerExit(PointerEventData eventData) {
@@ -57,6 +47,7 @@ public class DropZone : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 			PointerExited ();
 		if(_placeholder != null)
 			Destroy(_placeholder.gameObject);
+		Coords.PositionChanged -= Redraw;
 	}
 
 	private void EnableListening(String name)
@@ -68,5 +59,21 @@ public class DropZone : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 		if(_placeholder != null)
 			Destroy(_placeholder.gameObject);
 		_dragginInProgress = false;
+	}
+
+	private void Redraw(int position) 
+	{
+		Debug.Log("Redraw called");
+		if (_placeholder != null) Destroy(_placeholder.gameObject);
+		_placeholder = Instantiate(Card);
+		for (int i = 0; i < _placeholder.childCount; i++)
+		{
+			Destroy(_placeholder.GetChild(i).gameObject);
+		}
+
+		Destroy(_placeholder.GetComponent<Image>());
+			
+		_placeholder.SetParent(transform);
+		_placeholder.transform.SetSiblingIndex(position);
 	}
 }
